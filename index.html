@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,6 +19,7 @@
             justify-content: center;
             align-items: center;
             font-family: 'VT323', monospace;
+            cursor: pointer;
         }
 
         #canvas-container {
@@ -78,6 +80,22 @@
             opacity: 0.7;
         }
 
+        .click-hint {
+            position: absolute;
+            top: 20px;
+            color: #00ff41;
+            font-size: 1.2rem;
+            text-shadow: 0 0 5px #00ff41;
+            z-index: 5;
+            opacity: 0;
+            animation: fadeIn 2s ease-in forwards;
+            animation-delay: 15s;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 0.7; }
+        }
+
         @keyframes blink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0; }
@@ -91,12 +109,14 @@
     <div class="scanlines"></div>
     <div class="crt-overlay"></div>
     <div class="loading-text" id="statusText">INITIALIZING SYSTEM...</div>
+    <div class="click-hint" id="clickHint">[ CLICK OR PRESS ENTER TO CONTINUE ]</div>
 </div>
 
 <script>
     const canvas = document.getElementById('treeCanvas');
     const ctx = canvas.getContext('2d');
     const statusText = document.getElementById('statusText');
+    const clickHint = document.getElementById('clickHint');
 
     let width, height;
     let treePixels = [];
@@ -105,11 +125,6 @@
     const treeDuration = 15000;
     let treeComplete = false;
     
-    // Bird image
-    const birdImg = new Image();
-    birdImg.src = 'asciibird.png';
-    
-    // Birds array
     let birds = [];
     const NUM_BIRDS = 8;
 
@@ -269,20 +284,12 @@
         ctx.shadowBlur = 8;
         ctx.shadowColor = COLOR_MAIN;
         
-        // Draw pixel art bird using rectangles
-        // Body
         ctx.fillRect(-15, -5, 30, 15);
-        // Head
         ctx.fillRect(10, -10, 15, 12);
-        // Beak
         ctx.fillRect(25, -5, 10, 5);
-        // Left wing (animated)
         ctx.fillRect(-10, -20 - wingOffset, 20, 15);
-        // Right wing (animated)
         ctx.fillRect(-5, -15 + wingOffset, 15, 10);
-        // Tail
         ctx.fillRect(-25, 0, 15, 8);
-        // Eye
         ctx.fillStyle = '#000';
         ctx.fillRect(18, -7, 4, 4);
         
@@ -319,7 +326,6 @@
             });
         }
 
-        // Draw birds after tree is complete
         if (progress >= 1) {
             if (!treeComplete) {
                 treeComplete = true;
@@ -333,14 +339,12 @@
             });
         }
 
-        // Glitch effect
         if (Math.random() > 0.98) {
             const glitchY = Math.random() * height;
             ctx.fillStyle = `rgba(0, 255, 65, 0.3)`;
             ctx.fillRect(0, glitchY, width, 2);
         }
 
-        // Status text
         if (progress < 0.3) statusText.innerText = "LOADING ASSETS...";
         else if (progress < 0.6) statusText.innerText = "RENDERING GEOMETRY...";
         else if (progress < 0.9) statusText.innerText = "COMPILING BIOMASS...";
@@ -353,6 +357,18 @@
         animationFrameId = requestAnimationFrame(draw);
     }
 
+    function redirectToSite() {
+        window.location.href = 'https://notes.phttp.com';
+    }
+
+    document.addEventListener('click', redirectToSite);
+    
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            redirectToSite();
+        }
+    });
+
     window.addEventListener('resize', resize);
     resize();
     requestAnimationFrame(draw);
@@ -360,3 +376,4 @@
 
 </body>
 </html>
+```
